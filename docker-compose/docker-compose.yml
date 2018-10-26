@@ -1,0 +1,26 @@
+version "3"
+
+services:
+  # https://hub.docker.com/r/networkboot/dhcpd/
+  # https://github.com/networkboot/docker-dhcpd
+  # isc-dhcp-server as running in ubuntu
+  # https://hub.docker.com/r/pghalliday/tftp/
+  tftp:
+    image: jumanjiman/tftp-hpa:latest
+    volumes:
+      - ./tftp/config:/tftpboot
+      - ./tftp/rules:/tftpboot/rules/default
+    ports:
+      - "69:69/udp"
+
+  dhcp:
+    image: networkboot/dhcpd:latest
+    command: eth0
+    environment:
+      - DHCPARGS=eth0
+    volumes:
+      - ./dhcp/data:/data
+    # change this to the specific ports?
+    #network_mode: "host"
+    ports:
+      - "67:67/udp"
